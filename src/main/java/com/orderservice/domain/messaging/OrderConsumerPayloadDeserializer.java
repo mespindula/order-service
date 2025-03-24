@@ -2,18 +2,20 @@ package com.orderservice.domain.messaging;
 
 import com.orderservice.domain.data.model.event.OrderConsumerPayload;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
 
 @Configuration
+@Slf4j
 public class OrderConsumerPayloadDeserializer implements Deserializer<OrderConsumerPayload> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public OrderConsumerPayloadDeserializer() {
-        System.out.println("✅ DESERIALIZADOR FOI INICIALIZADO!");
+        log.info("✅ DESERIALIZADOR FOI INICIALIZADO!");
     }
 
     @Override
@@ -23,11 +25,11 @@ public class OrderConsumerPayloadDeserializer implements Deserializer<OrderConsu
     @Override
     public OrderConsumerPayload deserialize(String topic, byte[] data) {
         try {
-            System.out.println("🚀 Deserializando payload: " + new String(data));
+            log.info("🚀 Deserializando payload: " + new String(data));
             return objectMapper.readValue(data, OrderConsumerPayload.class);
         } catch (Exception e) {
-            System.out.println("ERRO: "+e.toString());
-            throw new RuntimeException("Erro ao deserializar a mensagem do Kafka", e);
+            log.error("Falha ao deserializar mensagem: ", e);
+            throw new RuntimeException("Falha ao deserializar a mensagem do Kafka", e);
         }
     }
 

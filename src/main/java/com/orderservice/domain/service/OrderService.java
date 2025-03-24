@@ -30,7 +30,6 @@ public class OrderService {
     @Transactional
     public void processOrder(OrderConsumerPayload consumerPayload) {
         try {
-            System.out.println("VAI BUSCAR NO BD");
             Order order = orderRepository.findByExternalId(consumerPayload.getExternalId());
 
             if (nonNull(order)) {
@@ -50,7 +49,6 @@ public class OrderService {
                     .products(products)
                     .build();
 
-            System.out.println("VAI SALVAR NO BD");
             orderRepository.save(order);
 
             OrderProducerPayload producerPayload = OrderProducerPayload.builder()
@@ -64,7 +62,6 @@ public class OrderService {
         } catch (OptimisticLockException e) {
             log.error("Conflito de concorrência ao salvar pedido: {}", consumerPayload.getExternalId(), e);
         } catch (Exception e) {
-            System.out.println("ERRO: "+e.toString());
             log.error("Erro inesperado ao processar pedido: {}", consumerPayload.getExternalId(), e);
         }
     }

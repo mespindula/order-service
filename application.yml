@@ -4,7 +4,7 @@ spring:
     listener:
       missing-topics-fatal: false  # Impede que falhe se o tópico não existir
       ack-mode: record  # Garante que cada mensagem seja confirmada individualmente
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
     consumer:
       group-id: order-group
       auto-offset-reset: earliest

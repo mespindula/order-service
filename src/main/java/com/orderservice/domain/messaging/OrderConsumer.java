@@ -18,16 +18,8 @@ public class OrderConsumer {
 
     @KafkaListener(topics = "new-orders", groupId = "order-group", concurrency = "3")
     public void consumeNewOrder(ConsumerRecord<String, OrderConsumerPayload> order) {
-        try {
-            System.out.println("📥 Mensagem recebida no Kafka!");
-            System.out.println("Partição: " + order.partition() + " | Offset: " + order.offset());
-            System.out.println("VALOR: " + order.value());
-           // OrderConsumerPayload order = new ObjectMapper().readValue(record.value(), OrderConsumerPayload.class);
-            System.out.println("Order deserializado: " + order.value());
-            orderService.processOrder(order.value());
-        } catch (Exception e) {
-            System.out.println("ERRO: "+e.toString());
-        }
+        log.info("📥 Mensagem recebida no Kafka!");
+        orderService.processOrder(order.value());
     }
 
 }
