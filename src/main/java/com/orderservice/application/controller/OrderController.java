@@ -25,7 +25,7 @@ public class OrderController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar pedido por ID", description = "Retorna os detalhes do pedido")
-    public Order getOrderById(@PathVariable Long id) {
+    public Order getOrderById(@PathVariable(name = "id") Long id) {
         return orderService.findById(id);
     }
 }
