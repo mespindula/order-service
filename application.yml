@@ -1,0 +1,58 @@
+# application.yml
+spring:
+  kafka:
+    listener:
+      missing-topics-fatal: false  # Impede que falhe se o tópico não existir
+      ack-mode: record  # Garante que cada mensagem seja confirmada individualmente
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: order-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.orderservice.domain.messaging.OrderConsumerPayloadDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.orderservice.domain.messaging.OrderProducerPayloadSerializer
+      properties:
+        request.timeout.ms: 5000  # 5 segundos
+        delivery.timeout.ms: 60000  # 1 minuto
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orders_db
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+  metrics:
+    tags:
+      application: order-service
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'order-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8080']
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+
+logging:
+  level:
+    org.springframework: DEBUG
+    org.springframework.kafka: DEBUG
